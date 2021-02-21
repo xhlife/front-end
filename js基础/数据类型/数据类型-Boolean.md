@@ -1,0 +1,21 @@
+
+## Boolean
+> 只有两个值 `true / false`
+
+### 其他值转Boolean
+> Boolean() 将 `0,NaN,'',null,undefined`转化为False,其他为true
+```javascript
+ Boolean(0);
+ Boolean(NaN);
+ Boolean('');
+ Boolean(null);
+ Boolean(undefined);
+ // 以上都为False
+ Boolean([]) // true
+```
+> `!取反运算` 先执行Boolean(), 再取反,因此 `!!`相当于`Boolean()`
+```javascript
+!'' // true
+![] // false
+```
+>`if`语句`if(/这里会将值转Boolean/)`
