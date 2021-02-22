@@ -24,8 +24,8 @@ person['name'] // 'xxx'
 ### 删除属性
 > 真删除
 `delete object[key]` 
-<br>
+
 > 假删除
-设置为 `null/undefined`
+设置为 `null/undefined` 
 
 
