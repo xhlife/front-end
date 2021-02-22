@@ -23,7 +23,8 @@ person['name'] // 'xxx'
 ### 设置属性（略）
 ### 删除属性
 > 真删除
-`delete object[key]`
+`delete object[key]` 
+<br>
 > 假删除
 设置为 `null/undefined`
 
