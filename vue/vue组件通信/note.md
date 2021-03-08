@@ -30,6 +30,7 @@ export default {
 
 子组件接受父组件的属性
 `注意`: 如果不通过props接收，那么数据将会绑定到html标签体上
+```html
 <template>
  <div>子组件1: {{mny}}</div>
 </template>
@@ -42,7 +43,7 @@ export default {
  }
 };
 </script>
-
+```
 
 ## 二.$emit使用（子传父，通过事件触发）
 子组件触发父组件方法,通过回调的方式将修改的内容传递给父组件
@@ -260,4 +261,7 @@ mounted() {
 
 ## 八.Vuex通信
 状态管理
+
+## 九. 非vue本身技术
+浏览器存储， localStorage,sessionStorage,cookie，indexDB等
 
