@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .parent{
+      width: 200px;
+      height: 150px;
+      background-color: skyblue;
+      display: flex;
+      flex-flow: row wrap;
+      align-content: flex-start;
+    }
+    .child{
+      box-sizing: border-box;
+      background-color: white;
+      flex: 0 0 25%; /* 采用百分比实现 */
+      height: 50px;
+      border: 1px solid red;
+    }
+    .fullscreen{
+      width: 100vw;
+      display: flex;
+      flex-flow: row wrap;
+    }
+    .fullscreen .child{
+      flex: 0 0 33.2%;
+      height: 50px;
+      border: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+  <!-- 
+    流式布局：  每行的项目数固定，会自动换行
+   -->
+   <div class="parent">
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+     <div class="child"></div>
+   </div>
+
+   <div class="fullscreen">
+     <div class="child">1</div>
+     <div class="child">2</div>
+     <div class="child">3</div>
+     <div class="child">4</div>
+     <div class="child">5</div>
+     <div class="child">6</div>
+     <div class="child">7</div>
+     <div class="child">8</div>
+     <div class="child">9</div>
+     <div class="child">10</div>
+     <div class="child">11</div>
+   </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #layout{
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    header,footer{
+      width: 100%;
+      height: 100px;
+      background-color: skyblue;
+    }
+    .main{
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background-color: #ccc;
+      display: flex;
+      flex-direction: row;
+    }
+    .content{
+      flex: 1;
+    }
+    .left, .right{
+      flex: 0 0 200px;
+      background-color: yellowgreen;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body id="layout">
+  <!-- 
+      圣杯布局---页面从上而下，分为三个部分，头部，躯干，尾部，
+      其中躯干又水平分为左中右，左右固定，中间自适应
+   -->
+   <header>...</header>
+   <div class="main">
+     <div class="left"></div>
+     <div class="content"></div>
+     <div class="right"></div>
+   </div>
+   <footer>...</footer>
+</body>
+</html>

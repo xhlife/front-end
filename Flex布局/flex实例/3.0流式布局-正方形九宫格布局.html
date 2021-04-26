@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box{
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+    .content{
+      width: 100%;
+      height: 0;
+      position: relative;
+      padding-bottom: 100vh;
+      background-color: #ccc;
+      display: flex;
+      flex-flow: row wrap;
+    }
+    .child{
+      width: 33vw;
+      height: 33vw;
+      background-color: #fff;
+      border: 1px solid #000;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <!-- 
+    2.0的流式布局，需要给定宽高，才可以实现九宫格，而想要全屏的正方形流式布局，则需要借用padding来实现
+   -->
+   <div class="box">
+     <div class="content">
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+       <div class="child"></div>
+     </div>
+   </div>
+</body>
+</html>
