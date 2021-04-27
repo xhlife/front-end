@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .box {
+        width: 100vw;
+        height: 100px;
+        position: relative;
+        display: flex;
+      }
+      .left {
+        width: 200px;
+        background-color: #ccc;
+        height: 100%;
+      }
+      .middle {
+        flex: 1;
+        height: 100%;
+        background-color: yellowgreen;
+      }
+      .right {
+        flex: 2;
+        height: 100%;
+        background-color: #fed;
+      }
+      .box1{
+        width: 100vw;
+        height: 100px;
+        background-color: skyblue;
+        display: flex;
+        /* 不用felx,下面也可以用float */
+      }
+      .box1 .left1{
+        width: 200px;
+        height: 100%;
+        background-color: #dfe;
+        /* float: left; */
+      }
+      .box1 .middle1{
+        /* 减号前后需要有空格 */
+        width: calc((100vw - 200px) / 3);
+        height: 100%;
+        background-color: yellow;
+        opacity: 0.6;
+        /* float: left; */
+      }
+      .box1 .right1{
+        width: calc((100vw - 200px) * 2 / 3);
+        height: 100%;
+        background-color: #000;
+        opacity: 0.3;
+        /* float: left; */
+      }
+      .box2{
+        width: 100%;
+        height: 100px;
+        background-color: skyblue;
+        display: flex;
+        box-sizing: border-box;
+      }
+      .box2 .left2{
+        width: 200px;
+        /* 需要设置min-width,否侧下面计算时，左边固定会被减少 */
+        min-width: 200px;
+        height: 100%;
+        background-color: orange;
+        opacity: 0.3;
+      }
+      .box2 .middle2{
+        width: 33.3%;
+        height: 100%;
+        background-color: pink;
+        opacity: 0.4;
+      }
+      .box2 .right2{
+        width: 66.6%;
+        height: 100%;
+        background-color: purple;
+        opacity: 0.4;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- flex实现 -->
+    <div class="box">
+      <div class="left"></div>
+      <div class="middle"></div>
+      <div class="right"></div>
+    </div>
+    <!-- 采用calc实现 -->
+    <div class="box1">
+      <div class="left1"></div>
+      <div class="middle1"></div>
+      <div class="right1"></div>
+    </div>
+    <!-- 百分比实现 -->
+    <div class="box2">
+      <div class="left2"></div>
+      <div class="middle2"></div>
+      <div class="right2"></div>
+    </div>
+  </body>
+</html>
