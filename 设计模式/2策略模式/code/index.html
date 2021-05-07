@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .div{
+      width: 100px;
+      height: 100px;
+      background-color: skyblue;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="div">div</div>
+  <script src="./Tween.js"></script>
+  <script src="./Animate.js"></script>
+  <script>
+    let div = document.querySelector('.div');
+    let animate = new Animate(div);
+    // animate.start( 'left', 500, 1000, 'strongEaseOut'); 
+    animate.start( 'top', 800, 3500, 'strongEaseIn' );
+  </script>
+</body>
+
+
+</html>
