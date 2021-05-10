@@ -16,6 +16,9 @@ class AjaxRequest {
         // 请求拦截器，头部添加token
         instance.interceptors.request.use(config => {
             config.headers.Authorization = localStorage.getItem('token');
+            // 可以合并，自定义的头部或者timeout
+            // config.timeOut = data.timeOut
+            // Object.assign(config.headers,data.config)
             return config
         },err => Promise.reject(err))
         // 响应拦截器
