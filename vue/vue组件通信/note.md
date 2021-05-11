@@ -198,9 +198,9 @@ Vue.prototype.$broadcast = function $broadcast(eventName, data) {
 批量向下传入方法
 ```html
 <Son2 name="test" age="10" @click="()=>{this.mny = 500}"></Son2>
-<!-- 可以在son2组件中使用listeners属性,可以将方法继续向下传递 -->
+<!-- 可以在Grandson2组件中使用listeners属性,可以将方法继续向下传递 -->
 <Grandson2 v-bind="$attrs" v-on="$listeners"></Grandson2>
-
+<!-- Grandson2中的按钮,用于出发listeners -->
 <button @click="$listeners.click()">更改</button>
 ```
 
@@ -218,6 +218,12 @@ provide() {
 
 ```javascript
 inject: ["parentMsg"] // 会将数据挂载在当前实例上
+// 如果不提供(provide),可以使用默认值
+inject: {
+  parentMsg: {
+    default: '父亲'
+  }
+}
 ```
 
 ## 六.Ref使用
