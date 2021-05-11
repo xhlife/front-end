@@ -160,12 +160,15 @@ export default {
 使用v-slot 将内部值传即可
 ```html
 <!-- 父组件 xxx.vue -->
+<!-- 在父组件中使用子组件标签 -->
 <List :arr="arr">
+<!-- 通过v-slot方式接收子组件的数据 item -->
     <template v-slot="{item}">
         {{item}}
     </template>
 </List>
 <!-- 子组件 List.vue -->
+<!-- 子组件使用 slot接受外面的dom节点，同时通过v-bind:item将数据暴露给外界使用 -->
 <div v-for="(item,key) in arr" :key="key">
     <slot :item="item"></slot>
 </div>
