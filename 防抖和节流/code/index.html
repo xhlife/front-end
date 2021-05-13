@@ -1,152 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
-        .throttle {
-            width: 100px;
-            height: 100px;
-            background-color: skyblue;
-            cursor: move;
-        }
+      .throttle {
+        width: 100px;
+        height: 100px;
+        background-color: skyblue;
+        cursor: move;
+      }
 
-        .drag {
-            width: 200px;
-            height: 200px;
-            text-align: center;
-            line-height: 200px;
-            background-color: yellowgreen;
-        }
+      .drag {
+        width: 200px;
+        height: 200px;
+        text-align: center;
+        line-height: 200px;
+        background-color: yellowgreen;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <p>防抖，简单说，防止你手抖，拼命点击按钮, </p>
+  <body>
     <button onclick="notImmediate()">不立刻提交,只执行一次</button>
-
-    <button onclick="immediate()">立即执行一次，结束执行一次</button>
+    <button onclick="immediate()">立即执行一次，只执行一次</button>
+    <button onclick="immediateAndLast()">立即执行一次，结束执行一次</button>
     <div class="throttle" draggable="true" ondragstart="dragStart(event)"></div>
 
-    <div class="drag" ondragover="throReturn(event)">可以放置拖放</div>
+    <div class="drag" ondragover="throReturn(event)">
+      可以放置拖放,用于触发over
+    </div>
     <script>
-        /* 
+      /* 
             防抖
          */
-        function submit() {
-            console.log('执行最后一次点击');
-        }
-        // 主要实现
-        function debounce(fn, wait) {
-            let timer = null;
-            return function () {
-                const _this = this;
-                const args = arguments; // 记录参数，不记录参数，则在setTimeout中使用箭头函数
-                // 这里可以获取事件对象
-                let e = window.event;
-                console.log(e);
-                clearTimeout(timer)
-                timer = setTimeout(function () {
-                    fn.apply(_this, args);
-                    clearTimeout(timer);
-                }, wait);
-            }
-        }
-        const notImmediate = debounce(submit, 3000);
 
-        function submitImme() {
-            console.log('我立刻执行，最后也执行');
-        }
+      // 主要实现
+      function submit() {
+        console.log("执行最后一次点击");
+      }
 
-        function debounce2(fn, wait, immediate) {
-            let timer;
-            let _this = this;
-            return function () {
-                if (immediate) {
-                    fn.apply(this, arguments);
-                    immediate = false;
-                }
-                clearTimeout(timer);
-                timer = setTimeout(() => {
-                    fn.apply(_this, arguments);
-                    immediate = true;
-                    clearTimeout(timer)
-                }, wait);
-            }
-        }
-        const immediate = debounce2(submitImme, 3000, true);
+      // 最后一次触发
+      function debounce(fn, wait) {
+        let timer = null;
+        return function () {
+          const _this = this;
+          const args = arguments;
+          // 这里可以获取事件对象
+          let e = window.event;
+          console.log(e);
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            fn.apply(_this, args);
+            clearTimeout(timer);
+          }, wait);
+        };
+      }
+      const notImmediate = debounce(submit, 3000);
 
+      // 第一次触发
+      function submitImAndLast() {
+        console.log("我执行第一次点击");
+      }
+      function debounce2(fn, wait, immediate) {
+        let timer;
+        return function () {
+          let _this = this;
+          let args = arguments;
+          clearTimeout(timer);
+          if (immediate) {
+            let callnow = !timer;
+            timer = setTimeout(() => {
+              timer = null
+            }, wait);
+            if(callnow) fn.apply(_this,args)
+          }else{
+              timer = setTimeout(() => {
+                  fn.apply(_this,arguments)
+              }, wait);
+          }
+        };
+      }
 
-        /* 
+      const immediate = debounce2(submitImAndLast, 3000, true);
+      //第一次和最后一次都触发
+      function submitImme() {
+        console.log("我立刻执行，最后也执行");
+      }
+
+      // 第一次触发，最后一次也触发
+      function debounce3(fn, wait, immediate) {
+        let timer;
+        let _this = this;
+        return function () {
+          if (immediate) {
+            fn.apply(this, arguments);
+            immediate = false;
+          }
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            fn.apply(_this, arguments);
+            immediate = true;
+            clearTimeout(timer);
+          }, wait);
+        };
+      }
+      const immediateAndLast = debounce3(submitImme, 3000, true);
+
+      /* 
             节流
          */
-        // 节流，字面意思，节制流量，限制流动
-        function dragStart(e) {
-            e = window.event || arguments[0]
-            console.log(e);
-        }
-        function over(e) {
-            console.log(e);
-        }
-        // 定时器版本
-        function throttle(func, wait) {
-            let timeout;
-            return function () {
-                let _this = this, args = arguments;
-                if (!timeout) {
-                    timeout = setTimeout(() => {
-                        timeout = null;
-                        func.apply(_this, args);
-                    }, wait);
-                }
+      // 节流，字面意思，节制流量，限制流动
+      function dragStart(e) {
+        e = window.event || arguments[0];
+        console.log(e);
+      }
+      function over(e) {
+        console.log(e);
+      }
+      // 定时器版本
+      function throttle(func, wait) {
+        let timeout;
+        return function () {
+          let _this = this,
+            args = arguments;
+          if (!timeout) {
+            timeout = setTimeout(() => {
+              timeout = null;
+              func.apply(_this, args);
+            }, wait);
+          }
+        };
+      }
+      // const throReturn = throttle(over,3000);
+
+      // 时间戳版本
+      function throttleTime(func, wait) {
+        let _this,
+          args,
+          init = 0;
+        return function (params) {
+          let now = +new Date();
+          _this = this;
+          args = arguments;
+          if (now - init > wait) {
+            // 一开始进来便触发一次
+            func.apply(_this, args);
+            init = now;
+          }
+        };
+      }
+      //    const throReturn = throttleTime(over, 3000);
+
+      // 时间戳 + 定时器 实现一次触发两次执行 ， 时间戳
+
+      function throttleTimeAndTimeout(func, wait) {
+        let init = 0;
+        let timeout;
+        return function () {
+          let now = +new Date();
+          let _this = this;
+          let args = arguments;
+          if (now - init > wait) {
+            func.apply(_this, args);
+            console.log("时间戳");
+            init = now;
+          } else {
+            if (!timeout) {
+              timeout = setTimeout(() => {
+                func.apply(_this, args);
+                console.log("定时器");
+                timeout = null;
+              }, wait);
             }
-        }
-        // const throReturn = throttle(over,3000);
-
-        // 时间戳版本
-        function throttleTime(func, wait) {
-            let _this, args, init = 0;
-            return function (params) {
-                let now = +new Date();
-                _this = this;
-                args = arguments;
-                if (now - init > wait) { // 一开始进来便触发一次
-                    func.apply(_this, args);
-                    init = now;
-                }
-            }
-        }
-        //    const throReturn = throttleTime(over, 3000);
-
-        // 时间戳 + 定时器 实现一次触发两次执行 ， 时间戳
-
-        function throttleTimeAndTimeout(func, wait) {
-            let init = 0;
-            let timeout;
-            return function () {
-                let now = +new Date();
-                let _this = this;
-                let args = arguments;
-                if (now - init > wait) {
-                    func.apply(_this, args);
-                    console.log('时间戳');
-                    init = now;
-                } else {
-                    if (!timeout) {
-                        timeout = setTimeout(() => {
-                            func.apply(_this, args);
-                            console.log('定时器');
-                            timeout = null;
-                        }, wait);
-                    }
-
-                }
-            }
-        }
-        const throReturn = throttleTimeAndTimeout(over, 3000);
+          }
+        };
+      }
+      const throReturn = throttleTimeAndTimeout(over, 3000);
     </script>
-</body>
-
+  </body>
 </html>
