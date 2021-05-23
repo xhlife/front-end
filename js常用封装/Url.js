@@ -11,3 +11,26 @@ export const getUrlDecodeParam = function(name){
     return null;
   }
 }
+
+/**
+ * @description 获取所有的参数
+ */
+
+export const getQuery = (url) => {
+  if (url) {
+    let search = url.substring(url.lastIndexOf('?') + 1);
+    return JSON.parse(
+      '{"' +
+        decodeURIComponent(search)
+          .replace(/"/g, '\\"')
+          .replace(/&/g, '","')
+          .replace(/=/g, '":"') +
+        '"}'
+    );
+  } else {
+    let q = {};
+    // replace的回调(_,k,v) k 是第一个子式([^?&=]+)的匹配值，v是第二子式([^&]+)的匹配值
+    location.href.replace(/([^?&=]+)=([^&]+)/g, (_, k, v) => (q[k] = v));
+    return q;
+  }
+};
