@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>2线</title>
+  </head>
+  <body>
+    <canvas
+      id="myCanvas"
+      width="500"
+      height="300"
+      style="border: 1px solid #ccc"
+    ></canvas>
+  </body>
+  <!-- 
+    参考管道渲染流程图，来看代码 (../images/process.png)
+   -->
+  <script>
+    //获取上下文
+    var canvas = document.getElementById('myCanvas')
+    var gl = canvas.getContext('webgl')
+
+    //定义线段数组坐标 (x,y,z) 两点确定一条线段，
+    var vertices = [
+      -0.7, -0.1, 0, -0.3, 0.6, 0, 
+      -0.3, -0.3, 0, 0.2, 0.6, 0, 
+      0.3, -0.3, 0, 0.7, 0.6, 0,
+    ]
+
+    // 创建缓冲区
+    var vertex_buffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+
+    //着色器程序
+    var vertCode =
+      // attribute 变量，只允许在着色器程序中使用  vec3 三维 (vec2二维)  coordinates 坐标
+      'attribute vec3 coordinates;' +
+      'void main() {' +
+      'gl_Position = vec4(coordinates,1.0);' + //坐标位置，数据关联后将采用 var vertices中的数据
+      '}'
+    // 在 画一个点的时候我们是这样声明坐标原点的 gl_Position =vec4(0.0,-0.5,0.0,1.0);' 
+    var fragCode =
+      'void main() {' +
+      'gl_FragColor = vec4(1, 0.5, 0.0, 1);' + //RBGA值
+      '}'
+
+      // 编译着色器代码三步  create -> shaderSource -> compile
+    var vertShader = gl.createShader(gl.VERTEX_SHADER)
+    var fragShader = gl.createShader(gl.FRAGMENT_SHADER)
+    gl.shaderSource(vertShader, vertCode)
+    gl.shaderSource(fragShader, fragCode)
+    gl.compileShader(vertShader)
+    gl.compileShader(fragShader)
+
+    // 创建程序
+    var shaderProgram = gl.createProgram()
+    gl.attachShader(shaderProgram, vertShader)
+    gl.attachShader(shaderProgram, fragShader)
+    gl.linkProgram(shaderProgram)
+    gl.useProgram(shaderProgram)
+
+    // 从着色器程序中，拿到点的坐标
+    var coord = gl.getAttribLocation(shaderProgram, 'coordinates')
+    // coord 坐标  3 每三个数为一组对应(x,y,z) 如果是 2 那么对应 (x,y) 
+    gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0, 0)
+    gl.enableVertexAttribArray(coord)
+
+    //画线
+    // 清空画布
+    gl.clearColor(0.5, 0.5, 0.5, 0.9)
+    // 深度测试
+    gl.enable(gl.DEPTH_TEST)
+    // 清楚颜色字节数据
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    // 重新设置视口
+    gl.viewport(0, 0, myCanvas.width, myCanvas.height)
+    // gl.LINES  代表着画线   gl.TRIANGLES那么将画三角形
+    gl.drawArrays(gl.LINES, 0, 6)
+
+  </script>
+</html>
