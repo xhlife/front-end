@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4-二维平移</title>
+    <link rel="stylesheet" href="./css/ui.css" />
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <div id="uiContainer">
+      <div id="ui">
+        <div id="x"></div>
+        <div id="y"></div>
+      </div>
+    </div>
+    <script id="vertex-shader-2d" type="x-shader/x-vertex">
+      attribute vec2 a_position;
+
+      uniform vec2 u_resolution;
+
+      void main() {
+         // convert the rectangle points from pixels to 0.0 to 1.0
+         // 转换 正方形坐标像素点 -> 裁剪画布 0.0 - 1.0
+         vec2 zeroToOne = a_position / u_resolution;
+
+         // convert from 0->1 to 0->2
+         vec2 zeroToTwo = zeroToOne * 2.0;
+
+         // convert from 0->2 to -1->+1 (clipspace)
+         vec2 clipSpace = zeroToTwo - 1.0;
+
+         gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+      }
+    </script>
+    <!-- fragment shader -->
+    <script id="fragment-shader-2d" type="x-shader/x-fragment">
+      precision mediump float;
+
+      uniform vec4 u_color;
+
+      void main() {
+         gl_FragColor = u_color;
+      }
+    </script>
+    <script src="../utils/web-utils.js"></script>
+    <script src="../utils/webgl-lesson-ui.js"></script>
+    <script>
+      var canvas = document.querySelector('#canvas')
+      var gl = canvas.getContext('webgl')
+      if (!gl) {
+        console.log('浏览器不支持')
+      }
+
+      // 创建着色器程序
+      var program = webglUtils.createProgramFromScripts(gl, [
+        'vertex-shader-2d', // 字符串 为script 着色器程序 的 id
+        'fragment-shader-2d',
+      ])
+
+      // 寻找属性值  'a_position'在着色器内部定义好的 attribute vec4 a_position
+      var positionLocation = gl.getAttribLocation(program, 'a_position')
+      var resolutionLocation = gl.getUniformLocation(program, 'u_resolution')
+      var colorLocation = gl.getUniformLocation(program, 'u_color')
+
+      // 创建空的缓冲区
+      var positionBuffer = gl.createBuffer()
+      // 绑定数据到缓冲区
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+
+      var translation = [0, 0]
+      var width = 100
+      var height = 30
+      var color = [Math.random(), Math.random(), Math.random(), 1]
+
+      drawScene()
+      // 建立滑块 ui 用于拖动平移
+      webglLessonsUI.setupSlider('#x', {
+        slide: updatePosition(0),
+        max: gl.canvas.width,
+      })
+      webglLessonsUI.setupSlider('#y', {
+        slide: updatePosition(1),
+        max: gl.canvas.height,
+      })
+      // 当坐标更新，重新绘制
+      function updatePosition(index) {
+        return function (event, ui) {
+          translation[index] = ui.value
+          drawScene()
+        }
+      }
+
+      function drawScene() {
+        webglUtils.resizeCanvasToDisplaySize(gl.canvas)
+        // 让 webgl 将裁剪的画布 转换为 pixels(像素)
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
+
+        gl.clear(gl.COLOR_BUFFER_BIT)
+
+        // 开启程序
+        gl.useProgram(program)
+        gl.enableVertexAttribArray(positionLocation)
+
+        // 绑定位置信息
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+        // setRectangle函数 内部重新生成了坐标信息，同时将信息填入缓冲区 gl.bufferData()
+        setRectangle(gl, translation[0], translation[1], width, height)
+        var size = 2
+        var type = gl.FLOAT
+        var normalize = false
+        var stride = 0
+        var offset = 0
+        gl.vertexAttribPointer(
+          positionLocation,
+          size,
+          type,
+          normalize,
+          stride,
+          offset
+        )
+
+        gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height)
+        gl.uniform4fv(colorLocation, color)
+        var primitiveType = gl.TRIANGLES
+        var offset = 0
+        var count = 6
+        gl.drawArrays(primitiveType, offset, count)
+      }
+      // 重新生成 位置信息
+      function setRectangle(gl, x, y, width, height) {
+        var x1 = x
+        var x2 = x + width
+        var y1 = y
+        var y2 = y + height
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]),
+          gl.STATIC_DRAW
+        )
+      }
+    </script>
+  </body>
+</html>
