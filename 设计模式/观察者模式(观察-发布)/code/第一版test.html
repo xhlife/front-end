@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button id="trigger">发布消息</button>
+  <button id="add">添加订阅者</button>
+  <hr>
+  <div id="message"></div>
+  <script src="./第一版.js"></script>
+  <script>
+    var id = 0
+    var addbtn = document.getElementById('add')
+    var triggerbtn = document.getElementById('trigger')
+    var message = document.getElementById('message')
+
+    // 每点击一下添加订阅者按钮，都会添加一个订阅者(虽然这里回调都是同一个)
+    addbtn.addEventListener('click',add)
+    function add(){
+      Public.listen(function(index){
+        message.innerHTML += index + '  '
+      })
+    }
+
+    // 每次发布信息，都会通知每一个订阅者，同时携带 id 信息返回给订阅者(回调函数)
+    triggerbtn.addEventListener('click',trigger)
+    function trigger(){
+      Public.trigger(id)
+      id++
+    }
+    
+  </script>
+</body>
+</html>
