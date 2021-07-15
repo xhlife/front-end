@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button id="trigger">发布信息1</button>
+  <button id="trigger2">发布信息2</button>
+  <button id="addone">添加订阅1</button>
+  <button id="addtwo">添加订阅2</button>
+  <hr>
+  消息
+  <div id="msgone"></div>
+  <hr>
+  <script src="./two.js"></script>
+  <script>
+    var triggerbtn = document.getElementById('trigger')
+    var triggerbtn2 = document.getElementById('trigger2')
+    var addonebtn = document.getElementById('addone')
+    var addtwobtn = document.getElementById('addtwo')
+    var msgone = document.getElementById('msgone')
+
+    addonebtn.addEventListener('click',addone)
+    function addone(){
+      Public.listen('one',function(msg){
+        msgone.innerHTML += msg + '  <br>'
+      })
+    }
+    addtwobtn.addEventListener('click',addtwo)
+    function addtwo(){
+      Public.listen('two',function(msg){
+        msgone.innerHTML += msg + '  <br>'
+      })
+    }
+    // 点击按钮一只会 通知订阅了 one的 ，而不会通知订阅 two的， 按钮二同理
+    triggerbtn.onclick = function(){
+      Public.trigger('one','我是one')
+    }
+    triggerbtn2.onclick = function(){
+      Public.trigger('two','我是two')
+    }
+  </script>
+</body>
+</html>
