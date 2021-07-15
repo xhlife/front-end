@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button id="trigger">发布消息1</button>
+  <button id="trigger2">发布消息2</button>
+
+  <button id="addone">订阅消息1</button>
+  <button id="addtwo">订阅消息2</button>
+
+  <button id="remove">取消所有订阅</button>
+  <button id="removeone">取消消息1订阅</button>
+  <button id="removetow">取消消息2订阅</button>
+
+  <hr>
+  消息
+  <div id="msg"></div>
+  <hr>
+  取消订阅通知
+  <div id="del"></div>
+  <script src="./three.js"></script>
+
+  <script>
+    var triggerbtn = document.getElementById('trigger')
+    var trigger2 = document.getElementById('trigger2')
+
+    var addonebtn = document.getElementById('addone')
+    var addtwobtn = document.getElementById('addtwo')
+
+    var removebtn = document.getElementById('remove')
+    var removeonebtn = document.getElementById('removeone')
+    var removetwobtn = document.getElementById('removetow')
+
+    var msgbox = document.getElementById('msg')
+    var del = document.getElementById('del')
+
+    triggerbtn.addEventListener('click',trigger)
+    function trigger(){
+      Public.trigger('one','我是one')
+    }
+    trigger2.addEventListener('click',function(){
+      Public.trigger('two','我是two')
+    })
+
+    addonebtn.addEventListener('click',one)
+    function one(){
+      Public.listen('one',function(msg){
+        msgbox.innerHTML += msg +'   <br>'
+      })
+    }
+    
+    addtwobtn.addEventListener('click',two)
+    function two(){
+      Public.listen('two',function(msg){
+        msgbox.innerHTML += msg + '   <br>'
+      })
+    }
+    removebtn.addEventListener('click',remove)
+    function remove(){
+      Public.remove('one')
+      Public.remove('two')
+    }
+    removeonebtn.addEventListener('click',function(){
+      Public.remove('one')
+      del.innerHTML += "取消1订阅  <br>"
+    })
+    removetwobtn.addEventListener('click',function(){
+      Public.remove('two')
+      del.innerHTML += "取消2订阅  <br>"
+    })
+  </script>
+</body>
+</html>
