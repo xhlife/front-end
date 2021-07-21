@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button>Dom0级 --- click me </button>
+  <button>Dom2级 --- click me </button>
+
+  <script>
+    var btnList = document.querySelectorAll('button')
+    var btn0 = btnList[0]
+    btn0.onclick = function(){
+      alert('dom0 第一次')
+    }
+    btn0.onclick = function(){
+      alert('dom0 第二次，第一次被我搞没了')
+    }
+    var btn1= btnList[1]
+    btn1.addEventListener('click',function(){
+      alert('dom2 第一次')
+    })
+    btn1.addEventListener('click',function(){
+      alert('dom2 第二次')
+    })
+  </script>
+</body>
+</html>
