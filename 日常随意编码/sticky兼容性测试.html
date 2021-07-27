@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      overflow: hidden;
+    }
+    .test{
+      width: 700px;
+      height: 2500px;
+      background-color: #ccc;
+      overflow: scroll;
+      position: absolute;
+      top: 300px;
+    }
+    .sticky{
+      width: 700px;
+      height: 200px;
+      background-color: #000;
+      position: -webkit-sticky; /* Safari */
+      position: sticky;
+      top: 0;
+    }
+  </style>
+</head>
+<!-- 
+
+  IE 11 以下都不行
+  Edge 高版本可以
+ -->
+<body>
+  <p>123</p>
+  <p>456</p>
+  <p>789</p>
+  <div class="test">
+    <div class="sticky"></div>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+    <p>1</p>
+
+
+  </div>
+
+  <script>
+    // 判断是否支持 sticky定位
+    function isSupportStikky(){
+      let div = document.createElement('div')
+      let prefix = ['','-webkit-']
+      let stickyText = ''
+      prefix.forEach( function(item) {
+        stickyText += 'position:' + item + 'sticky;'
+      })
+      div.style.cssText = stickyText
+      document.body.appendChild(div)
+      let reg = /sticky/i
+      let isSupport =reg.test(window.getComputedStyle(div,null).position)
+      console.log(window.getComputedStyle(div,null).position);
+      document.body.removeChild(div)
+      return isSupport
+    }
+    console.log(isSupportStikky());
+  </script>
+</body>
+</html>
