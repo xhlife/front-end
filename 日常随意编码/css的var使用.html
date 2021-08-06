@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+  :root {
+    --blue: #1e90ff;
+    --white: #ffffff;
+  }
+  .test{
+    width: 100px;
+    height: 100px;
+    background-color: var(--red);
+    border: 10px solid var(--blue);
+  }
+  </style>
+</head>
+<body>
+  <div class="test">
+  </div>
+  <script>
+    let testBg = 'red'
+    let sty = document.createElement('style') // 动态添加标签的方式，同时绑定变量
+    sty.innerText = `:root{--red:${testBg}}`
+    document.head.appendChild(sty)
+  </script>
+</body>
+</html>
