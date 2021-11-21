@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      background: rgba(100, 145, 250, 0.3);
+    }
+    #canvas{
+      margin-left: 20px;
+      margin-right: 0;
+      margin-bottom: 20px;
+      border: thin solid #aaa;
+      cursor: crosshair;
+      padding: 0;
+    }
+    #controls{
+      margin: 20px 0 20px 20px;
+    }
+    #rubberbanDiv{
+      position: absolute;
+      border: 3px solid #000;
+      cursor: crosshair;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="controls">
+    <input id="resetButton" type="button" value="Reset"></input>
+  </div>
+  <div id="rubberbanDiv"></div>
+  <canvas id="canvas" width="800" height="520"></canvas>
+
+  <script>
+    var canvas = document.querySelector('#canvas'),
+      context = canvas.getContext('2d'),
+      rubberbanDiv = document.querySelector('#rubberbanDiv'),
+      resetButton = document.querySelector('#resetButton'),
+      image = new Image();
+      mousedown = {}, // 记录鼠标初始未知
+      rubberbanReactangle = {}, // 记录选区
+      dragging = false;
+
+    function rubberbandStart(x, y) {
+      mousedown.x = x;
+      mousedown.y = y;
+      
+      // 选框的左上角
+      rubberbanReactangle.left = mousedown.x;
+      rubberbanReactangle.top = mousedown.y;
+
+      moveRubberbandDiv(); // 绘制选框
+      showRubberbandDiv();
+      dragging = true;
+    }
+    function rubberbandStretch(x, y) {
+      // 计算绘制的方向
+      rubberbanReactangle.left = x < mousedown.x ? x : mousedown.x;
+      rubberbanReactangle.top = y < mousedown.y ? y : mousedown.y;
+
+      rubberbanReactangle.width = Math.abs(x - mousedown.x);
+      rubberbanReactangle.height = Math.abs(y - mousedown.y);
+      moveRubberbandDiv();
+      resizeRubberbandDiv();
+    }
+    function rubberbandEnd() {
+      var bbox = canvas.getBoundingClientRect();
+      try {
+        context.drawImage(canvas, rubberbanReactangle.left - bbox.left,rubberbanReactangle.top - bbox.top, rubberbanReactangle.width, rubberbanReactangle.height, 0, 0, canvas.width, canvas.height);
+      } catch (error) {
+        
+      }
+      resetRubberbanRectangle();
+      rubberbanDiv.style.width = 0;
+      rubberbanDiv.style.height = 0;
+      hideRubberbandDiv();
+
+      dragging = false;
+    }
+    // 移动选区
+    function moveRubberbandDiv() {
+      rubberbanDiv.style.top = rubberbanReactangle.top + 'px';
+      rubberbanDiv.style.left = rubberbanReactangle.left + 'px';
+    }
+    // 缩放选区
+    function resizeRubberbandDiv() {
+      rubberbanDiv.style.width = rubberbanReactangle.width + 'px';
+      rubberbanDiv.style.height = rubberbanReactangle.height + 'px';
+    }
+    // 展示选区
+    function showRubberbandDiv(){
+      rubberbanDiv.style.display = 'inline';
+    }
+    // 
+    function hideRubberbandDiv(){
+      rubberbanDiv.style.display = 'none';
+    }
+
+    function resetRubberbanRectangle() {
+      rubberbanReactangle = {
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0
+      }
+    }
+
+    // 事件绑定
+    canvas.onmousedown = function(e) {
+      var x = e.clientX,
+          y = e.clientY;
+      e.preventDefault();
+      rubberbandStart(x, y);
+    }
+
+    window.onmousemove = function(e) {
+      var x = e.clientX,
+          y = e.clientY;
+      e.preventDefault();
+      if(dragging){
+        rubberbandStretch(x, y);
+      }
+    }
+    window.onmouseup = function(e){
+      e.preventDefault();
+      rubberbandEnd();
+    }
+    image.onload = function() {
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    }
+    resetButton.onclick = function (e) {
+      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height)
+    }
+    image.src = 'https://mdn.mozillademos.org/files/5397/rhino.jpg';
+  </script>
+</body>
+
+</html>
