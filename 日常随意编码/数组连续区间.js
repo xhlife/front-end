@@ -37,7 +37,7 @@ let res = continuousInterval([1, 2, 3, 5, 9, 10, 11, 12]);
 let res1 = continuousInterval([
   1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 55, 56, 57, 59, 61,
 ]);
-console.log(res);
-console.log(res1);
+console.log(res); // [[1,3], [5], 9,12]
+console.log(res1); // [[1,6], [9, 12], [55, 57], [59], [61]]
 
 export default {};

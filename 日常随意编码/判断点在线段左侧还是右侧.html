@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    canvas {
+      background-color: skyblue;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas" width="400" height="400"></canvas>
+  <script>
+    /*
+      方法一、
+      左右方向是相对前进方向的,只要指定了前进方向就可以知道左右(比如指定前进方向是从直线的起点到终点).判断点在直线的左侧还是右侧是计算几何里面的一个最基本算法.使用矢量来判断. 
+      定义：平面上的三点P1(x1,y1),P2(x2,y2),P3(x3,y3)的面积量：
+
+      S(P1,P2,P3)=|y1 y2 y3|= (x1-x3)*(y2-y3)-(y1-y3)*(x2-x3)
+
+      当P1P2P3逆时针时S为正的，当P1P2P3顺时针时S为负的。
+
+      令矢量的起点为A，终点为B，判断的点为C， 
+      如果S（A，B，C）为正数，则C在矢量AB的左侧； 
+      如果S（A，B，C）为负数，则C在矢量AB的右侧； 
+      如果S（A，B，C）为0，则C在直线AB上。
+    */
+  </script>
+  <script>
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    context.beginPath();
+    var startX = 50;
+    var startY = 50;
+    var endX = 50;
+    var endY = 300;
+    var P1 = [startX, startY];
+    var P2 = [endX, endY];
+    context.moveTo(startX, startY);
+    context.lineTo(endX, endY);
+    context.stroke();
+    context.closePath();
+    document.body.addEventListener('click', (e) => {
+      var clickPointX = e.clientX
+      var clickPointY = e.clientY;
+      var pointClick = [e.clientX, e.clientY]
+      var P3 = [clickPointX, clickPointY];
+      var s1 = (P1[0] - P3[0]) * (P2[1] - P3[1]);
+      var s2 = (P1[1] - P3[1]) * (P2[0] - P3[0]);
+      var s = s1 - s2;
+      console.log(s, ss);
+    })
+  </script>
+</body>
+
+</html>
