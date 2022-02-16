@@ -7,6 +7,7 @@
   <title>Document</title>
 </head>
 <body>
+  <!-- 出处  https://juejin.cn/post/6844903982742110216 -->
   <!-- 
     虚拟列表: 其实是按需显示的一种实现，即只对可见区域进行渲染，对非可见区域中的数据不渲染或部分渲染的技术，从而达到极高的渲染性能。
    -->
@@ -25,5 +26,28 @@
         <!-- item-n -->
       </div>
     </div>
+
+    <!-- 接着监听infinite-list-container的scroll事件，获取滚动位置scrollTop -->
+    <!-- 
+      假设：
+      可视区域的高度固定: screenHeight
+      列表每项高度固定: itemSize 
+      列表数据: listData
+      当前滚动位置: scrollTop
+     -->
+     <!-- 
+      可推算：
+      列表总高度：listHeight = listData.length * itemSize
+      可显示的列表项数visibleCount = Math.ceil(screenHeight / itemSize)
+      数据的起始索引startIndex = Math.floor(scrollTop / itemSize)
+      数据的结束索引endIndex = startIndex + visibleCount
+      列表显示数据为visibleData = listData.slice(startIndex,endIndex)
+
+      偏移量startOffset = scrollTop - (scrollTop % itemSize);
+      -->
+
+      <!-- 
+        当滚动后，由于渲染区域相对于可视区域已经发生了偏移，此时我需要获取一个偏移量startOffset，通过样式控制将渲染区域偏移至可视区域中。
+       -->
 </body>
 </html>
