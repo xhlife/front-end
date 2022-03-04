@@ -44,6 +44,6 @@ function quickSort(arr,start=0,end=arr.length-1){
     if(end - start <=1) return
     let mid = quick(arr,start,end)
 
-    quickSort(arr,start,mid)
+    quickSort(arr,start,mid-1)
     quickSort(arr,mid+1,end)
 }
