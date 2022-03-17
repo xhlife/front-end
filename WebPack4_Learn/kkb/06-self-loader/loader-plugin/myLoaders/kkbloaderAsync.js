@@ -1,6 +1,3 @@
-每一个loader, 其实就是一个函数
-
-```js
 module.exports = function (source) {
   //loader处理模块
   //多个loader是有顺序的
@@ -18,6 +15,3 @@ module.exports = function (source) {
   //this.callback(),返回多个信息
   //   this.callback(null, result);
 };
-```
-
-然后配置webpack.config.js文件的loader使用上面的函数即可
