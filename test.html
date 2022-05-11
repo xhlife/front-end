@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="test()">复制链接</button>
+    <script>
+      function test() {
+        const promise = navigator.clipboard.writeText("test")
+
+        promise.then(
+          success => {
+            console.log(success, "sss")
+          },
+          fail => {
+            console.log(fail, "fail")
+          }
+        )
+      }
+    </script>
+  </body>
+</html>
