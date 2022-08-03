@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul id="ul">
+    <li>我是测试</li>
+  </ul>
+  <!-- <script>
+    console.log(document.getElementById('ul'))
+    new Promise(resolve => resolve('123')).then(res =>{
+      document.getElementById('ul').children[0].innerHTML = res
+    })
+  </script> -->
+  <script>
+    let now = Date.now();
+    const total = 200000;
+    let ul = document.getElementById('ul');
+    for (let i = 0; i < total; i++) {
+      let li = document.createElement('li');
+      li.innerText = ~~(Math.random() * total);
+      ul.appendChild(li);
+    }
+    
+    // new Promise(resolve => resolve('promise')).then(res => {
+    //   ul.children[0].innerHTML = res
+    // })
+    setTimeout(() => {
+      ul.children[0].innerHTML = 'hhhhhh'
+    },0)
+    setTimeout(()=>{
+      console.log('总运行时间：',Date.now() - now);
+    },0)
+    console.log('JS运行时间：', Date.now() - now);
+
+    // async function ay1() {
+    //   await ay2()
+    //   console.log('ay1 end');
+    // }
+
+    // function ay2() {
+    //   return new Promise(resolve => {
+    //     setTimeout(() => {
+    //       for (let i = 0; i < total; i++) {
+    //         let li = document.createElement('li');
+    //         li.innerText = ~~(Math.random() * total);
+    //         ul.appendChild(li);
+    //       }
+    //       resolve(true)
+    //     }, 2000)
+    //   })
+    // }
+
+    // ay1()
+    // console.log('end');
+  </script>
+</body>
+
+</html>
