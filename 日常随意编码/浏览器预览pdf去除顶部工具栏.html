@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 只需要在pdf路径后面加上#scrollbars=0&toolbar=0&statusbar=0即可去除工具栏，如 -->
+  <script>
+    // 第一种加载方式
+    var obj = document.createElement("embed");
+    obj.setAttribute("src", pdf+"#scrollbars=0&toolbar=0&statusbar=0")
+    obj.setAttribute("type", "application/pdf")
+    obj.setAttribute("width", "100%")
+    obj.setAttribute("height", "600")
+    obj.setAttribute("internalinstanceid", "81")
+    document.body.appendChild(obj);
+  </script>
+
+  <!-- 方式二 通过插件的方式处理成 比如pdf.js  -->
+
+  <!--预览word -->
+
+  <!-- 方案1： 采用微软等第三方平台  -->
+ <script>
+  //  window.open(`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`
+
+  //  方案2: 采用第三方包 通过url 获取二进制文件，转换为 html内容
+  // import mammoth from "mammoth";
+  // readExcelFromRemoteFile: function (url) {
+  //     var vm = this;
+  //     var xhr = new XMLHttpRequest();
+  //     xhr.open("get", url, true);
+  //     xhr.responseType = "arraybuffer";
+  //     xhr.onload = function () {
+  //       if (xhr.status == 200) {
+  //         mammoth
+  //           .convertToHtml({ arrayBuffer: new Uint8Array(xhr.response) })
+  //           .then(function (resultObject) {
+  //             vm.$nextTick(() => {
+  //               // document.querySelector("#wordView").innerHTML =
+  //               //   resultObject.value;
+  //               vm.vHtml = resultObject.value;
+  //             });
+  //           });
+  //       }
+  //     };
+  //     xhr.send();
+  //   },
+ </script>
+
+
+</body>
+</html>
