@@ -137,7 +137,24 @@ gui线程，拿到html文档，开始解析，如果 css资源加载css资源，
 
 注意⚠️：async/defer只适用于外链不适用于内链 
 
-因此， css不会阻塞HTML解析，但是会阻塞 Render Tree 的生成， 而 script 会阻塞html的解析
+因此， css不会阻塞HTML解析，但是会阻塞 Render Tree 的生成，而js运行的时候，有可能需要读取样式内容， 因此 css会阻塞js运行，  而 script 会阻塞html的解析
+
+##### DOMContentLoad 和 load 事件
+<pre style="font-size:12px">
+DOMContentLoad和Load不同点在于：
+1、 DOMContentLoaded是HTML文档（CSS、JS）被加载以及解析完成之后触发（即 HTML->DOM的过程完成 ）；
+
+2、load需要在页面的图片、视频等加载完后被触发，而DOMContent不需要等待这些资源加载完成；
+
+3.一般情况下，load在DOMContent解析完之后才被触发（有可能在其前面触发）；
+
+针对页面的优化：
+
+　将js放到body标签底部，原因是因为浏览器生成Dom树的时候是逐行读取HTML代码，script标签放在最后面就不会影响前面的页面的渲染。那么问题来了，既然Dom树完全生成好后页面才能渲染出来，浏览器又必须读完全部HTML才能生成完整的Dom树，script标签不放在body底部是不是也一样，因为dom树的生成需要整个文档解析完毕。
+
+　在页面渲染过程中的，First Paint（第一渲染）的时间。页面的paint不是在渲染树生成之后吗？其实现代浏览器为了更好的用户体验,渲染引擎将尝试尽快在屏幕上显示的内容。它不会等到所有HTML解析之前开始构建和布局渲染树。部分的内容将被解析并显示。也就是说浏览器能够渲染不完整的dom树和cssom，尽快的减少白屏的时间。假如我们将js放在header，js将阻塞解析dom，dom的内容会影响到First Paint，导致First Paint延后。所以说我们会将js放在后面，以减少First Paint的时间，但是不会减少DOMContentLoaded被触发的时间。
+
+</pre>
 
 >  Attachment
 
