@@ -6,27 +6,28 @@
 
 > 进程之间通信： 管道，消息队列，共享内存，信号量，信号， socket。 chrome进程通信统称 IPC
 
-> 浏览器的是多进程，多线程的。 一个tab页可能就对应一个进程，为什么是可能？ 因为多个empty tab 会合并为一个进程
+> 浏览器内核(即渲染引擎)： Trident（微软\IE） Gecko(Firefox)  Presto(Opera前内核,现在用Blink)  Webkit(Safari内核，Chrome内核原型)  Blink(由Google和Opera Software开发)
+
+> 浏览器的是多进程，多线程的。以chrome为例， 一个tab页可能就对应一个进程，为什么是可能？ 因为多个empty tab 会合并为一个进程
 
 > 浏览器包含哪些进程
 
 * browser 进程，only-one, 浏览器的主进程（主要负责主控与协调）。 负责页面展示（将renderer进程得到的合成帧展示在用户界面，主要交给gpu进程完成）与用户交互， tab页管理， 网络资源的管理与下载。其中主要包括以下线程
     
-    UI thread: 控制浏览器自身的按钮（比如回退，刷新）以及输入框（会自动对输入内容检测，如果是url则请求url, 如果是关键词则跳转搜索引擎，搜出搜出对应的url）
+* UI thread: 控制浏览器自身的按钮（比如回退，刷新）以及输入框（会自动对输入内容检测，如果是url则请求url, 如果是关键词则跳转搜索引擎，搜出搜出对应的url）
 
-    network thread: 处理网络请求(DNS寻址，建立TCP/TLS链接等操作)，从网上获取数据，然后解析http响应报文,如果是一个HTML文件，那么交给渲染进程（Render）处理，如果是zip文件或者其他文件则交给下载管理器。同时会进行网站安全检测，同源检测，避免跨站数据被发送至渲染进程。检查完成之后会告诉ui thread,查找一个渲染进程开始渲染。
+* network thread: 处理网络请求(DNS寻址，建立TCP/TLS链接等操作)，从网上获取数据，然后解析http响应报文,如果是一个HTML文件，那么交给渲染进程（Render）处理，如果是zip文件或者其他文件则交给下载管理器。同时会进行网站安全检测，同源检测，避免跨站数据被发送至渲染进程。检查完成之后会告诉ui thread,查找一个渲染进程开始渲染。
     
-    storage thread: 控制文件等的访问
-
+* storage thread: 控制文件等的访问
 
 
 * 第三方插件进程， 一种插件对应一个进程，仅当使用该插件时才创建
 
 * GPU进程， 最多一个，用于绘制
 
-* 渲染进程(webkit)(renderer进程)， 默认每个页面一个进程，互不影响。主要包括页面渲染、脚本执行、事件处理等
+* 渲染进程(renderer进程,主进程)， 默认每个页面一个进程，互不影响。主要包括页面渲染、脚本执行、事件处理等
 
-## 浏览器的渲染进程(webkit)
+## webkit内核
 
 ![webkit](./webkit-img/webkit.png)
 
@@ -38,20 +39,20 @@ browser进程收到用户请求(例如输入www.baidu.com),那么获取资源，
 位于红色箭头中间的正是 webkit 的核心内容
 
 ### webkit主要组成
-
-> web Core
+Webkit引擎包含WebCore排版引擎及JavaScriptCore解析引擎，均是从KDE的KHTML(排版引擎)及KJS引擎衍生而来。
+> webCore
 
 排版引擎， 可以解析html,css，生成dom-tree, render-tree等
 
 > JScore
 
-js引擎， 解析并执行js代码，种类比较多，用的比较多的如下
+JS引擎， 解析并执行JS代码，种类比较多，用的比较多的如下
 
-* Rhino， Mozilla基金会管理，开源，  用java编写
+* Rhino(/raɪnoʊ/犀牛)， Mozilla基金会管理，开源，  用java编写
 
 * SpiderMonkey  第一款js引擎， 早期用于Netscape Navigator, 现在用于Mozilla Firefox
 
-*v8 google开源， 主要用c++编写
+* v8 google开源， 主要用c++编写
 
 * javascriptCore 开源， 用于 safari
 
@@ -61,19 +62,20 @@ js引擎， 解析并执行js代码，种类比较多，用的比较多的如下
 
 > Platform API(webkit ports)
 
-主要用于移植不通的平台，也可以说是不同平台的不同实现
+主要用于移植不通的平台，不同平台不同的实现
 
 
 WebKit中的许多组件都是可以更换的（图中标灰色的部分）。对于webkit 的描述， 这里引用一句话
 
 "WebKit就像一个三明治。尽管Chromium的包装更像是一个墨西哥卷。一个美味的Web平台墨西哥卷。"     —— Dimitri Glazkov, Chrome WebKit hacker，Web Components和Shadow DOM拥护者。
 
-下面是WebKit的5个port；尽管它们共享了WebCore的大部分。
+下面是WebKit的5个port；它们共享了WebCore的大部分。
 
 ![webkit-ports](./webkit-img/webkit-ports.png)
 
 
 ### 渲染进程的多线程
+渲染进程可以说就是提供给webkit的
 
 浏览器的渲染进程是多线程的，主要包括下面 
 
@@ -186,8 +188,17 @@ gui线程会遍历DOM 及相关元素的计算样式，构建出包含每个元�
 
 因此， browser ui 并不是直接采用paint records来进行绘制的
 
+文档结构、元素的样式、元素的几何关系、绘画顺序、绘制指令这些可以统称为顶点数据
 
-文档结构、元素的样式、元素的几何关系、绘画顺序、绘制指令这些信息都有了，将这些信息转化为显示器中的像素信息(即上面提到的位图 bit map)， 这个过程叫做 光栅化（raster）
+光栅化（raster）就是把顶点数据转换为片元的过程。
+片元中的每一个元素对应于帧缓冲区中的一个像素。可以理解为像素描述集合，有特定的位置和颜色值。
+
+位图(bit map)是使用像素阵列来表示的图像， 可以简单理解为一堆像素点组成的图像。 
+
+根据上面两个定义，位图可以说是具有特定片元模式的矩形。
+
+因此，光栅化最终得到了位图。
+
 
 要绘制一个页面，最简单的就是只光栅化视口的部分的内容，如果用户发生滚动行为，就滚动光栅帧, 如下图： 
 
@@ -344,8 +355,8 @@ TurboFan 编译器，它是 JIT 优化的编译器，旨在解决Crankshaft的�
 
 Ignition的字节码可以直接用TurboFan生成优化的机器代码，而不必像Crankshaft那样从源代码重新编译。Ignition的字节码在V8中提供了更清晰且更不容易出错的基线执行模型，简化了去优化机制，这是V8 自适应优化的关键特性。最后，由于生成字节码比生成Full-codegen的基线编译代码更快，因此激活Ignition通常会改善脚本启动时间，从而改善网页加载。
 
-### 垃圾回收机制 GC
-js执行后，是会占用内存空间的，单js本身并不具备释放空间的能力，因此，JSCore需要有GC机制
+### 垃圾回收机制 (GC)
+js执行后，是会占用内存空间的，但JS本身并不具备释放空间的能力，因此，JSCore需要有GC机制
 
 V8 GC机制 [参考文章8.垃圾回收机制](./8.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6.md)
 
@@ -393,27 +404,29 @@ JS的诞生就是为了让浏览器也拥有一些交互，逻辑处理能力。
 
 ```html
 <script>
-  setTimeout(function test() {
-    console.log('setTimeout');
-  },1000);
+setTimeout(function test() {
+  console.log("setTimeout");
+}, 1000);
 
-  new Promise(resolve => {
-    console.log('promise 1')
-    resolve('promise 1')
-  });
+new Promise((resolve) => {
+  console.log("promise 1");
+  resolve("promise 1");
+});
 
-  new Promise(resolve => resolve('promise 2')).then(res => {
+new Promise((resolve) => resolve("promise 2"))
+  .then((res) => {
     console.log(res);
-    return 'promise 2 continue';
-  }).then(res2 => {
+    return "promise 2 continue";
+  })
+  .then((res2) => {
     console.log(res2);
   });
-  new Promise(resolve => {
-    setTimeout(() => resolve('promise 3'), 2000)
-  }).then(res => {
-    console.log(res);
-  });
-  console.log('end')
+new Promise((resolve) => {
+  setTimeout(() => resolve("promise 3"), 2000);
+}).then((res) => {
+  console.log(res);
+});
+console.log("end");
 </script>
 ```
 
