@@ -1,0 +1,22 @@
+{
+  "name": "static-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "xh-server": "bin/www"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "4.1.2",
+    "debug": "^4.3.4",
+    "handlebars": "^4.7.7",
+    "mime": "^3.0.0",
+    "yargs": "^17.5.1"
+  }
+}
