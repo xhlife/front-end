@@ -232,6 +232,7 @@ chrome第一个版本采用的就是这种绘制方式，缺点是当页面滚�
 
 * 是否包含 canvas video iframe
 
+（这些其实就是层叠上下位的内容，更详细内容看mnd文档）
 
 当满足上面其中一个条件时，这个Render Object就会被浏览器选中生成对应的Render Layer。
 

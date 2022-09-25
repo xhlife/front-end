@@ -62,3 +62,13 @@ if(a === undefined) a = {}
 // 下面的写法可以省敲几下键盘
 if(a === void 0) a = {}
 ```
+
+### 数组判断
+constructor比采用函数更快
+```js
+// 在 v8中
+const a = []
+a.constructor === Array // 最快
+a instanceOf Array  // 次
+Array.isArray(a) // 慢
+```
