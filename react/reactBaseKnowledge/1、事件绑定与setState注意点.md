@@ -101,3 +101,27 @@ while( !(v = callbacks.shift())) {
 }
 secondCallbacks.forEach(fn => fn())
 ```
+
+### 关于 setState
+* 不要直接修改 State , 使用 setState()
+```js
+this.state.test = 'f123' // 错误示范
+
+this.setState({test: 123})
+```
+
+* state的更新可能是异步的
+
+批量更新是被合并，且是异步的， 如果不想被合并的话，那么采用回调函数的方式
+```js
+this.setState(() => {
+  return {
+    test: 123
+  }
+})
+```
+
+如果把setState放在setTimeout中，则可达到同步执行目的
+
+
+
