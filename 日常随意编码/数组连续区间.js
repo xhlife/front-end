@@ -40,4 +40,33 @@ let res1 = continuousInterval([
 console.log(res); // [[1,3], [5], 9,12]
 console.log(res1); // [[1,6], [9, 12], [55, 57], [59], [61]]
 
-export default {};
+
+function continueArr(arr) {
+  const res = []
+  const len = arr.length
+  let left = 0
+  let resItem = null
+  for(let i = 0; i < len; i++) {
+    resItem = []
+    if(arr[i] + 1 === arr[i+1]) {
+      continue
+    } else {
+      if(left + 1 === i + 1) {
+        // res.push(resItem = [left + 1])
+        res.push(resItem = [arr[left]])
+      } else {
+        res.push(resItem = [arr[left], arr[i]])
+        // res.push(resItem = [left + 1, i + 1])
+      }
+      left = i + 1
+    }
+  }
+  return  res
+}
+
+let res3 = continueArr([1, 2, 3, 5, 9, 10, 11, 12]);
+let res4 = continueArr([
+  1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 55, 56, 57, 59, 61,
+]);
+console.log(res3); // [[1,3], [5], 9,12]
+console.log(res4); // [[1,6], [9, 12], [55, 57], [59], [61]]

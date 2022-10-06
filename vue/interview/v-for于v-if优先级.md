@@ -121,7 +121,7 @@ export function genElement(el: ASTElement, state: CodegenState): string {
 
 可见， 同级时先执行\_l(children, callback), 不同级时先 isFolder ? \_l(children, callback)
 
-1. 显然 v-for 优先于 v-if 被解析（把你是怎么知道的告诉面试官）
+1. 显然从ompiler/codegen/index.js中可知， v-for 优先于 v-if 被解析
 2. 如果同时出现，每次渲染都会先执行循环再判断条件，无论如何循环都不可避免，浪费了性能
 3. 要避免出现这种情况，则在外层嵌套 template，在这一层进行 v-if 判断，然后在内部进行 v-for 循环
 4. 如果条件出现在循环内部，可通过计算属性提前过滤掉那些不需要显示的项
