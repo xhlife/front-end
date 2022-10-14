@@ -35,7 +35,7 @@ function deep_set(res, path, v) {
   let i = 0;
   for(; i < path.length - 1; i++) {
     if(res[path[i]] === undefined) {
-      // 检测key是够是一个数字，是的话赋予数组
+      // 检测key是否是一个数字，是的话赋予数组
       if(path[i+1].match(/^\d+$/)) {
         res[path[i]] = []
       } else {

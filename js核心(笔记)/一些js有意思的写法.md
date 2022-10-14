@@ -63,7 +63,7 @@ if(a === undefined) a = {}
 if(a === void 0) a = {}
 ```
 
-### 数组判断
+## 数组判断
 constructor比采用函数更快
 ```js
 // 在 v8中
@@ -71,4 +71,37 @@ const a = []
 a.constructor === Array // 最快
 a instanceOf Array  // 次
 Array.isArray(a) // 慢
+```
+
+## 正则表达式的test和exce多次执行带来的bug
+
+```js
+let template = '我是{{name}}，年龄{{age}}，性别{{sex}}'; 
+let data = { name: '姓名', age: 18 }
+const reg = /\{\{(\w+)}\}/g
+console.log(reg.test(template)) // true
+console.log(reg.exec(template)) // 按理应该是检测到 {{name}}的，但是输出的 age
+
+const a = ['{{name}}', '{{age}}', '{{sex}}']
+
+for(let i = 0; i< a.length; i++) {
+  console.log(reg.exec(a[i]))
+}
+// 输出的结果如下, 第二个检测不到了
+/**
+ * 
+[ '{{name}}', 'name', index: 0, input: '{{name}}', groups: undefined ]
+null
+[ '{{sex}}', 'sex', index: 0, input: '{{sex}}', groups: undefined ]
+*/
+```
+
+相关解析： 
+在全局模式下，当 exec() 找到了与表达式相匹配的文本时，在匹配后，它将把正则表达式对象的 lastIndex 属性设置为匹配文本的最后一个字符的下一个位置。这就是说，您可以通过反复调用 exec() 方法来遍历字符串中的所有匹配文本。当 exec() 再也找不到匹配的文本时，它将返回 null，并把 lastIndex 属性重置为 0。
+
+```js
+for(let i = 0; i< a.length; i++) {
+  console.log(reg.exec(a[i]))
+  reg.exec(a[i] // 再执行一次， 就会将lastIndex 置为 0, 这样三次都能匹配到
+}
 ```
