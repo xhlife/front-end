@@ -103,5 +103,6 @@ null
 for(let i = 0; i< a.length; i++) {
   console.log(reg.exec(a[i]))
   reg.exec(a[i] // 再执行一次， 就会将lastIndex 置为 0, 这样三次都能匹配到
+  // 或者 reg.lastIndex = 0; 
 }
 ```
