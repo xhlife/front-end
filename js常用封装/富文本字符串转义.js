@@ -4,21 +4,23 @@ function formatHtml(text) {
   const tmp = text.replace(reg, function (m, m1) {
     return m.replace("pre", "div");
   });
-  return this.escape2Html(tmp);
+  return escape2Html(tmp);
 }
 // 转意符换成普通字符
 function escape2Html(str) {
+  
   var arrEntities = {
     lt: "<",
     gt: ">",
     nbsp: " ",
     amp: "&",
     quot: '"',
-   };
-   const val = str.replace(/&(lt|gt|nbsp|amp|quot);/gi, function (all, t) {
-     return arrEntities[t];
-   });
-   return this.formatRichText(val);
+  };
+  const val = str.replace(/&(lt|gt|nbsp|amp|quot);/gi, function (all, t) {
+    return arrEntities[t];
+  });
+  // return val
+  return formatRichText(val);
 }
 // 小程序中， 图片大小设置
 function formatRichText(html) {
