@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style scoped>
+    .success {
+      display: flex;
+      justify-content: center;
+    }
+    .box {
+      position: relative;
+      /* background-color: skyblue; */
+      width: 250px;
+      height: 250px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 8rem;
+      animation: moveToTop .8s linear 2.2s 1 normal forwards;
+    }
+    .box .progress {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 3;
+    }
+    .progress .circle {
+      fill: transparent;
+      stroke: #666;
+      stroke-width: 4px;
+      /* 188.4 376.8 565.2 753.6 */
+      /* 0 即画一个圆 */
+      stroke-dasharray: 753.6px;
+      /* CSS 中的stroke-dashoffset属性定义了 SVG 路径上 stroke 的破折号开始的位置。 */
+      stroke-dashoffset: 565.2px;
+      animation: clock-animation 0.8s linear 0s 2 normal forwards, clock-animation3 1.5s linear 1.6s 1 normal forwards;
+      transform: rotate(-90deg);
+      transform-origin: center;
+    }
+    .progress .path {
+      transform: translate(80px, 75px);
+      stroke-dasharray: 150;
+      stroke-dashoffset: 150;
+      animation: draw-checkmark 1s ease 3s forwards;
+    }
+    .box .img-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5.1rem;
+      height: 5.1rem;
+      background: #f6f7f9;
+      /* background-color: yellowgreen; */
+      border-radius: 50%;
+      overflow: hidden;
+      transform: translate(-50%, -50%);
+      animation: opa0 0.2s linear;
+      animation-iteration-count: 1;
+      animation-fill-mode: forwards;
+      animation-delay: 1.6s;
+    }
+    .box .img-box .rmb {
+      display: block;
+      position: absolute;
+      width: 2.77rem;
+      height: 4.91rem;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, 100%);
+      animation: rmb-move 0.8s linear;
+      animation-iteration-count: 2;
+      animation-fill-mode: forwards;
+    }
+    /* 圆环进度动画 */
+    @keyframes clock-animation {
+      0% {
+        stroke-dashoffset: 753.6px;
+      }
+      50% {
+        stroke-dashoffset: 565.2px;
+        transform: rotate(90deg);
+      }
+      100% {
+        transform: rotate(270deg);
+        stroke-dashoffset: 753.6px;
+      }
+    }
+    
+    /* 圆环缩小、移动动画 */
+    @keyframes clock-animation3 {
+      0% {
+        stroke-dasharray: 753.6px;
+        stroke-dashoffset: 0;
+        transform: rotate(0);
+        opacity: 0;
+        stroke: #666;
+      }
+      20% {
+        opacity: 1;
+        stroke: #6DC97B;
+        stroke-width: 4px;
+        transform: rotate(0) scale(1);
+      }
+      60%{
+        transform: rotate(0) scale(0.3);
+        stroke-dashoffset: 753.6px;
+        stroke-dashoffset: 0;
+        stroke: #6DC97B;
+        stroke-width: 20px;
+      }
+      100% {
+        transform: rotate(0) scale(0.3);
+        stroke-dashoffset: 753.6px;
+        stroke-dashoffset: 0;
+        stroke: #6DC97B;
+        stroke-width: 12px;
+      }
+    }
+    
+    @keyframes rmb-move {
+      0% {
+        transform: translate(-50%, 100%);
+      }
+      100% {
+        transform: translate(-50%, -115%);
+      }
+    }
+    @keyframes opa0 {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    @keyframes moveToTop {
+      0% {
+        margin-top: 8rem;
+      }
+      100% {
+        margin-top: 0rem;
+      }
+    }
+    @keyframes draw-checkmark {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+    </style>
+</head>
+<body>
+  <div class="success">
+    <div class="box">
+      <div class="progress">
+        <svg width="250" height="250">
+          <circle class="circle" cx="125" cy="125" r="120" ></circle>
+          <path class="path" d="M28 50 L42 63 L64 40" stroke="#6DC97B" stroke-width="4" fill="none" />
+        </svg>
+      </div>
+      <div class="img-box">
+        <img class="rmb" src="../assets/rmb.png" alt="" />
+      </div>
+      <div class="content"></div>
+    </div>
+  </div>
+</body>
+</html>
