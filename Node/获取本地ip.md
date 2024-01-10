@@ -38,43 +38,4 @@ export function getIp(): string | undefined {
     }
   }
 }
-```
-## 场景
-### qiankun.js微前端下，自动根据ip填写应用本地开发的ip地址
-
-#### 步骤一、修改vue.config.js
-
-```js
-chainWebpack(config) {
-    config.plugin("define").tap((args) => {
-      const ip = getIpAddress();
-      if (ip) {
-        // 将 ip挂到process.env上
-        args[0]["process.env"].VUE_APP_CURRENT_IP = `"${getIpAddress()}"`;
-      } else {
-        args[0]["process.env"].VUE_APP_CURRENT_IP = "localhost";
-      }
-      return args;
-    });
-}
-```
-
-#### 步骤二、修改main.js中注册子应用的代码
-```js
-const ip = process.env.VUE_APP_CURRENT_IP;
-registerMicroApps([
-  /*** 应用1   ***/
-  {
-    name: "app-consult",
-    entry:
-      process.env.NODE_ENV === "production"
-        ? "/app-consult/"
-        : `http://${ip}:9528/app-consult/`,
-    container: "#subAppWrapper",
-    // 应用路由前缀
-    activeRule: "/zgyhweb",
-    // 将vuex数据提供给子应用
-    props: { data: GlobalData },
-  },
-]);
-```
+``
