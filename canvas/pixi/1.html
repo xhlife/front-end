@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello World</title>
+  </head>
+  <!-- <script src="./pixi.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
+  <body>
+    <!-- <canvas></canvas> -->
+    <script type="text/javascript">
+      //Create a Pixi Application
+      const app = new PIXI.Application({ width: 640, height: 360 });
+      document.body.appendChild(app.view);
+      app.renderer.backgroundColor = 0x061639;
+
+      const container = new PIXI.Container();
+      container.x = app.screen.width / 2;
+      container.y = app.screen.height / 2;
+
+      app.stage.addChild(container);
+
+      const sprites = [];
+      let parent = container;
+      for (let i = 0; i < 3; i++) {
+        let sprite = PIXI.Sprite.from("images/cat.png");
+        sprite.anchor.set(0.5);
+        parent.addChild(sprite);
+        sprites.push(sprite);
+        parent = sprite;
+      }
+
+      let elapsed = 0.0;
+      app.ticker.add((delta) => {
+        elapsed += delta / 60;
+        const amount = Math.sin(elapsed);
+        const scale = 1.0 + 0.25 * amount;
+        const alpha = 0.75 + 0.25 * amount;
+        const angle = 40 * amount;
+        const x = 75 * amount;
+        for (let i = 0; i < sprites.length; i++) {
+          const sprite = sprites[i];
+          sprite.scale.set(scale);
+          sprite.alpha = alpha;
+          sprite.angle = angle;
+          sprite.x = x;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello World</title>
+  </head>
+  <!-- <script src="./pixi.min.js"></script> -->
+  <script src="https://pixijs.download/release/pixi.js"></script>
+  <body>
+    <!-- <canvas></canvas> -->
+    <script type="text/javascript">
+      const app = new PIXI.Application({ width: 640, height: 360 });
+      document.body.appendChild(app.view);
+
+      const promise = PIXI.Assets.load('images/cat.png')
+      console.log(promise)
+
+      /**
+       * 加载多资源 
+       * 
+        PIXI.Assets.addBundle('animals', {
+          bunny: 'bunny.png',
+          chicken: 'chicken.png',
+          humper: 'thumper.png',
+        });
+      */
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello World</title>
+  </head>
+  <!-- <script src="./pixi.min.js"></script> -->
+  <script src="https://pixijs.download/release/pixi.js"></script>
+  <body>
+    <!-- <canvas></canvas> -->
+    <script type="text/javascript">
+            const app = new PIXI.Application({ width: 640, height: 360 });
+            document.body.appendChild(app.view);
+
+            const frame = new PIXI.Graphics();
+            frame.beginFill(0x666666);
+            frame.lineStyle({ color: 0xffffff });
+            frame.drawRect(0, 0, 208, 208);
+            frame.position.set(320 - 104, 180 - 104);
+            app.stage.addChild(frame);
+
+            const mask = new PIXI.Graphics();
+            mask.beginFill(0xffffff);
+            mask.drawRect(0, 0, 200, 200);
+            mask.endFill();
+
+            const maskContainer = new PIXI.Container();
+            maskContainer.mask = mask;
+            maskContainer.addChild(mask);
+            maskContainer.position.set(4, 4);
+            frame.addChild(maskContainer);
+
+            let text = new PIXI.Text(
+              "This text will scroll up and be masked, so you can see how masking works.  Lorem ipsum and all that.\n\n" +
+                "You can put anything in the container and it will be masked!",
+              {
+                fontSize: 24,
+                fill: 0x1010ff,
+                wordWrap: true,
+                wordWrapWidth: 180,
+              }
+            );
+            text.x = 10;
+            maskContainer.addChild(text);
+
+            let elapsed = 0.0;
+            app.ticker.add((delta) => {
+        // Update the text's y coordinate to scroll it
+        elapsed += delta;
+        text.y = 10 + -100.0 + Math.cos(elapsed/50.0) * 100.0;
+      });
+      
+    </script>
+  </body>
+</html>
