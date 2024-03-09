@@ -7,7 +7,7 @@ export default {
       // test: 1
     }
   },
-  computed() {
+  computed: {
     computeTest () {
       return this.test
     }
