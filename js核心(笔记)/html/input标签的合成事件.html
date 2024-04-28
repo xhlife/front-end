@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <input type="text">
+
+  <script>
+    let isComposition = false
+    const inp = document.querySelector('input')
+    inp.addEventListener('input', (e) => {
+      // 当输入中文时， 未按下确认键也会一直监听键盘的输入， 怎么阻止呢？ 通过监听input 的合成事件
+      if(isComposition) return
+        console.log(e.target.value)
+    })
+    inp.addEventListener('compositionstart', (e) => {
+      isComposition = true
+      console.log('start')
+    })
+    inp.addEventListener('compositionend', () => {
+      isComposition = false
+    })
+  </script>
+</body>
+</html>

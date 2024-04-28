@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>打开文件夹</button>
+    <script>
+      const btn = document.querySelector("button");
+      btn.onclick = async function () {
+        try {
+          // 文件句柄
+          const handler = await showDirectoryPicker();
+          console.log(handler);
+          processHandle(handler);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      async function processHandle(handle) {
+        if (handle.kind === "file") {
+          return handle;
+        }
+        const iter = await handle.entries(); // 获取文件夹中的所有内容
+        // iter是异步迭代器
+        for await (const info of iter) {
+          console.log(info);
+          await processHandle(info[1]); // 递归处理文件夹
+        }
+      }
+    </script>
+  </body>
+</html>

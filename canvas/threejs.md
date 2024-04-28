@@ -41,6 +41,8 @@ three.js封装了场景、灯光、阴影、材质、纹理和三维算法，可
 
 - Mesh 网格对象
 
+  基类是Object3D
+
   网格对象由几何体Geometry和材质Material 两部分组成
 
     - Geometry 负责塑形
