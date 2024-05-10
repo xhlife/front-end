@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        background-color: #000;
+        width: 200px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+      const canvas = document.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+      function init() {
+        canvas.width = 200 * devicePixelRatio;
+        canvas.height = 200 * devicePixelRatio;
+      }
+      init();
+
+      ctx.beginPath();
+      const r = 80 * devicePixelRatio;
+      ctx.arc(canvas.width / 2, canvas.height / 2, r, 0, 2 * Math.PI);
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 10 * devicePixelRatio;
+      ctx.stroke();
+
+      //浏览器放大后， 图像会模糊， 怎么解决
+      // 公式： 只要保证 原始尺寸 = 样式尺寸 * 倍率（devicePixelRatio）
+      // canvas 在 style中设置的样式尺寸， 在 init 函数中设置的原始尺寸
+      
+    </script>
+  </body>
+</html>

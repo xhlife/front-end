@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .box {
+        width: 800px;
+        height: 600px;
+        background-color: skyblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">123</div>
+
+    <script>
+      /**
+       * 方案一： 在div的四周加四个div，然后监听鼠标的移入事件，
+       * 该方案的问题： 计算机中鼠标的运动是散列的，如果移入移出运动过快，那么是监听不到的
+       */
+
+      /**
+       * 方案二： 所有的方向问题，本质是角度问题。因此，以div的中心为坐标原点建立坐标系，那么
+       */
+
+      // 基于方案二的实现
+      const container = document.querySelector(".box");
+
+      const rect = container.getBoundingClientRect();
+
+      const theta = Math.atan2(rect.height, rect.width); // 以div的宽高比 得到一个基准角度的正切值
+
+      container.addEventListener("mouseenter", (e) => {
+        // 计算鼠标 在以div的原点为坐标系的坐标点
+        const x = e.offsetX - rect.width / 2;
+        const y = rect.height / 2 - e.offsetY;
+        // 鼠标角度
+        const d = Math.atan2(y, x);
+        if (d < theta && d >= -theta) {
+          container.innerHTML = "right";
+        } else if (d >= theta && d < Math.PI - theta) {
+          container.innerHTML = "top";
+        } else if (d >= Math.PI - theta || d < -(Math.PI - theta)) {
+          container.innerHTML = "left";
+        } else {
+          container.innerHTML = "bottom";
+        }
+      });
+    </script>
+  </body>
+</html>

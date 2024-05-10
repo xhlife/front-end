@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      #canvasContainer {
+        border: 1px solid #ccc;
+      }
+      #myCanvas {
+        border: 1px solid red;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="canvasContainer"
+      style="width: 800px; height: 600px; overflow: hidden"
+    >
+      <canvas id="myCanvas" width="800" height="600"></canvas>
+    </div>
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+      const canvasContainer = document.getElementById("canvasContainer");
+
+      let scale = 1.0;
+      let imageX = 0;
+      let imageY = 0;
+      let rectX = 100; // Initial x position of the rectangle
+      let rectY = 100; // Initial y position of the rectangle
+      const maxScale = 2.0;
+      const minScale = 0.5;
+      let isRightMouseDown = false;
+      let lastMouseX = 0;
+      let lastMouseY = 0;
+
+      // Load and draw an image on the canvas
+      const image = new Image();
+      image.src = "./imgs/QUIC.png";
+      image.onload = function () {
+        ctx.drawImage(image, imageX, imageY, canvas.width, canvas.height);
+        drawRectangle();
+      };
+
+      function drawRectangle() {
+        ctx.fillStyle = "red";
+        ctx.fillRect(rectX, rectY, 50 * scale, 50 * scale); // Draw a red rectangle at the specified position
+      }
+
+      canvasContainer.addEventListener("wheel", function (event) {
+        event.preventDefault();
+
+        const zoomSpeed = 0.1;
+        const zoomFactor = event.deltaY > 0 ? 1 - zoomSpeed : 1 + zoomSpeed;
+
+        const newScale = scale * zoomFactor;
+        console.log(newScale)
+        if (newScale >= minScale && newScale <= maxScale) {
+          scale = newScale;
+          imageX = (imageX - event.offsetX) * zoomFactor + event.offsetX;
+          imageY = (imageY - event.offsetY) * zoomFactor + event.offsetY;
+          rectX = (rectX - event.offsetX) * zoomFactor + event.offsetX;
+          rectY = (rectY - event.offsetY) * zoomFactor + event.offsetY;
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(
+            image,
+            imageX,
+            imageY,
+            canvas.width * scale,
+            canvas.height * scale
+          );
+          drawRectangle();
+        }
+      });
+      // Prevent default context menu on right-click
+      canvas.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+      });
+
+      canvasContainer.addEventListener("mousedown", function (event) {
+        if (event.button === 2) {
+          isRightMouseDown = true;
+          lastMouseX = event.clientX;
+          lastMouseY = event.clientY;
+        }
+      });
+
+      canvasContainer.addEventListener("mousemove", function (event) {
+        if (isRightMouseDown) {
+          const deltaX = event.clientX - lastMouseX;
+          const deltaY = event.clientY - lastMouseY;
+
+          imageX += deltaX;
+          imageY += deltaY;
+          rectX += deltaX;
+          rectY += deltaY;
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(
+            image,
+            imageX,
+            imageY,
+            canvas.width * scale,
+            canvas.height * scale
+          );
+          drawRectangle();
+
+          lastMouseX = event.clientX;
+          lastMouseY = event.clientY;
+        }
+      });
+
+      canvasContainer.addEventListener("mouseup", function (event) {
+        if (event.button === 2) {
+          isRightMouseDown = false;
+        }
+      });
+    </script>
+  </body>
+</html>
