@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="1000" height="800"></canvas>
+
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+      for (let i = 0; i < 10; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const width = Math.random() * 100;
+        const height = Math.random() * 100;
+        const color = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
+          Math.random() * 255
+        })`;
+
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
+
+        if (Math.random() < 0.5) {
+          // Draw rectangle
+          ctx.fillRect(x, y, width, height);
+        } else {
+          // Draw circle
+          ctx.beginPath();
+          ctx.arc(x, y, width, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
+      // Load and draw the image on the canvas
+      // const img = new Image();
+      // // img.crossOrigin = "anonymous";
+      // img.onload = function () {
+      //   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      //   // Draw random rectangles or circles on top of the image
+
+      // };
+
+      // img.src = "./imgs/QUIC.png"; // Replace 'image.jpg' with the actual path to your image
+      // Helper function to get the color of a pixel at a specific position
+      function getPixelColor(x, y, pixelData, canvasWidth) {
+        const index = (y * canvasWidth + x) * 4;
+        return `rgb(${pixelData[index]}, ${pixelData[index + 1]}, ${
+          pixelData[index + 2]
+        })`;
+      }
+
+      // // Flood Fill algorithm to select contiguous color areas
+      function floodFill(
+        x,
+        y,
+        targetColor,
+        pixelData,
+        canvasWidth,
+        canvasHeight
+      ) {
+        const stack = [[x, y]];
+        const selectedArea = [];
+
+        while (stack.length) {
+          const [currentX, currentY] = stack.pop();
+
+          if (
+            currentX < 0 ||
+            currentX >= canvasWidth ||
+            currentY < 0 ||
+            currentY >= canvasHeight
+          ) {
+            continue;
+          }
+
+          const currentColor = getPixelColor(
+            currentX,
+            currentY,
+            pixelData,
+            canvasWidth
+          );
+
+          if (currentColor !== targetColor) {
+            continue;
+          }
+
+          pixelData[(currentY * canvasWidth + currentX) * 4] = 255; // Set the pixel color to white
+          pixelData[(currentY * canvasWidth + currentX) * 4 + 1] = 255;
+          pixelData[(currentY * canvasWidth + currentX) * 4 + 2] = 255;
+          pixelData[(currentY * canvasWidth + currentX) * 4 + 3] = 255;
+
+          selectedArea.push([currentX, currentY]);
+
+          stack.push([currentX + 1, currentY]);
+          stack.push([currentX - 1, currentY]);
+          stack.push([currentX, currentY + 1]);
+          stack.push([currentX, currentY - 1]);
+        }
+
+        return selectedArea;
+      }
+      // Function to calculate the perpendicular distance from a point to a line
+      function perpendicularDistance(point, lineStart, lineEnd) {
+        const { x: px, y: py } = point;
+        const { x: x1, y: y1 } = lineStart;
+        const { x: x2, y: y2 } = lineEnd;
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const length = Math.sqrt(dx * dx + dy * dy);
+
+        // Calculate the perpendicular distance
+        let distance = 0;
+        if (length !== 0) {
+          distance = Math.abs((dy * px - dx * py + x2 * y1 - y2 * x1) / length);
+        }
+
+        return distance;
+      }
+
+      // Douglas-Peucker algorithm implementation
+      function douglasPeucker(points, epsilon) {
+        if (points.length <= 2) {
+          return points;
+        }
+
+        // Find the point with the maximum distance
+        let maxDistance = 0;
+        let maxIndex = 0;
+        const end = points.length - 1;
+        for (let i = 1; i < end; i++) {
+          const distance = perpendicularDistance(
+            points[i],
+            points[0],
+            points[end]
+          );
+          if (distance > maxDistance) {
+            maxDistance = distance;
+            maxIndex = i;
+          }
+        }
+
+        // Check if the maximum distance is greater than epsilon
+        if (maxDistance > epsilon) {
+          // Recursively simplify the contour
+          const left = douglasPeucker(points.slice(0, maxIndex + 1), epsilon);
+          const right = douglasPeucker(points.slice(maxIndex), epsilon);
+
+          // Combine the simplified segments
+          return left.slice(0, left.length - 1).concat(right);
+        } else {
+          // Return the start and end points if the maximum distance is less than epsilon
+          return [points[0], points[end]];
+        }
+      }
+
+      // // Draw a dashed line around the selected area
+      function drawDashedLine(selectedArea) {
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "black";
+        ctx.beginPath();
+        selectedArea.forEach(([x, y], index) => {
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // // Event listener for mouse click on the canvas
+      canvas.addEventListener("click", function (e) {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixelData = imageData.data;
+        const clickedColor = getPixelColor(
+          e.offsetX,
+          e.offsetY,
+          pixelData,
+          canvas.width
+        );
+
+        const selectedArea = floodFill(
+          e.offsetX,
+          e.offsetY,
+          clickedColor,
+          pixelData,
+          canvas.width,
+          canvas.height
+        );
+        console.log(selectedArea);
+        // Apply the contour simplification algorithm to the selectedArea dataset
+        const epsilon = 5; // Adjust the epsilon value as needed
+        const simplifiedContour = douglasPeucker(selectedArea, epsilon);
+      drawDashedLine(simplifiedContour)
+      });
+    </script>
+  </body>
+</html>
+
+<!-- 
+
+<div style="overflow: auto">
+  <div class="button" onclick="uploadClick()">Upload image and click on it</div>
+  <div class="button" onclick="trace()">Create polygons by current selection</div>
+  <div class="button" onclick="paint('FF0000', 0.35)">Paint the selection</div>
+  <input id="file-upload" type="file" accept="image/*" onchange="imgChange(this)" />
+</div>
+<div style="overflow: auto">
+  <div style="float: left; margin-right: 10px;">Blur radius: </div>
+  <input id="blurRadius" type="text" onchange="onRadiusChange.apply(this, arguments)" style="float: left; width: 20px; margin-right: 10px;" />
+  <div id="threshold"></div>
+</div>
+<div>(hold left mouse button and move to change the color threshold)</div>
+<div>(hold the CTRL key to add selection)</div>
+<div class='wrapper'>
+  <div class='content'>
+    <img id="test-picture" class="picture" />
+    <canvas class="canvas" id="resultCanvas" onmouseup="onMouseUp.apply(this, arguments)" onmousedown="onMouseDown.apply(this, arguments)" onmousemove="onMouseMove.apply(this, arguments)"></canvas>
+  </div>
+</div>
+
+.wrapper {
+    top: 80px;
+    width: 400px;
+    height: 350px;
+    overflow: auto;
+}
+.content {
+    position: relative;
+}
+.canvas {
+    position: absolute;
+}
+.canvas:hover {
+    cursor: default;
+}
+.picture {
+    position: absolute;
+}
+.button {
+    padding: 4px;
+    margin: 4px;
+    border: 1px solid black;
+    float: left;
+}
+.button:hover {
+    background-color: blue;
+    color: white;
+    cursor: pointer;
+}
+#threshold {
+    width: 95px;
+    float: left;
+}
+#file-upload {
+    display: none;
+}
+.add-mode {
+    cursor: copy !important;
+}
+
+window.onload = function() {
+    colorThreshold = 15;
+    blurRadius = 5;
+    simplifyTolerant = 0;
+    simplifyCount = 30;
+    hatchLength = 4;
+    hatchOffset = 0;
+
+    imageInfo = null;
+    cacheInd = null;
+    mask = null;
+    oldMask = null;
+    downPoint = null;
+    allowDraw = false;
+    addMode = false;
+    currentThreshold = colorThreshold;
+    
+    document.onkeydown = onKeyDown;
+    document.onkeyup = onKeyUp;
+    
+    showThreshold();
+    document.getElementById("blurRadius").value = blurRadius;
+    setInterval(function () { hatchTick(); }, 300);
+}
+function uploadClick() {
+    document.getElementById("file-upload").click();
+}
+function onRadiusChange(e) {
+    blurRadius = e.target.value;
+}
+function imgChange (inp) {
+    if (inp.files && inp.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var img = document.getElementById("test-picture");
+            img.setAttribute('src', e.target.result);
+            img.onload = function() {
+                window.initCanvas(img);
+            };
+        }
+        reader.readAsDataURL(inp.files[0]);
+    }
+}
+function initCanvas(img) {
+    var cvs = document.getElementById("resultCanvas");
+    cvs.width = img.width;
+    cvs.height = img.height;
+    imageInfo = {
+        width: img.width,
+        height: img.height,
+        context: cvs.getContext("2d")
+    };
+    mask = null;
+    
+    var tempCtx = document.createElement("canvas").getContext("2d");
+    tempCtx.canvas.width = imageInfo.width;
+    tempCtx.canvas.height = imageInfo.height;
+    tempCtx.drawImage(img, 0, 0);
+    imageInfo.data = tempCtx.getImageData(0, 0, imageInfo.width, imageInfo.height);
+}
+function getMousePosition(e) {
+    var p = $(e.target).offset(),
+        x = Math.round((e.clientX || e.pageX) - p.left),
+        y = Math.round((e.clientY || e.pageY) - p.top);
+    return { x: x, y: y };
+}
+function onMouseDown(e) {
+    if (e.button == 0) {
+        allowDraw = true;
+        addMode = e.ctrlKey;
+        downPoint = getMousePosition(e);
+        drawMask(downPoint.x, downPoint.y);
+    } else { 
+    		allowDraw = false;
+        addMode = false;
+        oldMask = null;
+    }
+}
+function onMouseMove(e) {
+    if (allowDraw) {
+        var p = getMousePosition(e);
+        if (p.x != downPoint.x || p.y != downPoint.y) {
+            var dx = p.x - downPoint.x,
+                dy = p.y - downPoint.y,
+                len = Math.sqrt(dx * dx + dy * dy),
+                adx = Math.abs(dx),
+                ady = Math.abs(dy),
+                sign = adx > ady ? dx / adx : dy / ady;
+            sign = sign < 0 ? sign / 5 : sign / 3;
+            var thres = Math.min(Math.max(colorThreshold + Math.floor(sign * len), 1), 255);
+            //var thres = Math.min(colorThreshold + Math.floor(len / 3), 255);
+            if (thres != currentThreshold) {
+                currentThreshold = thres;
+                drawMask(downPoint.x, downPoint.y);
+            }
+        }
+    }
+}
+function onMouseUp(e) {
+    allowDraw = false;
+    addMode = false;
+    oldMask = null;
+    currentThreshold = colorThreshold;
+}
+function onKeyDown(e) {
+	if (e.keyCode == 17) document.getElementById("resultCanvas").classList.add("add-mode");
+}
+function onKeyUp(e) {
+	if (e.keyCode == 17) document.getElementById("resultCanvas").classList.remove("add-mode");
+}
+function showThreshold() {
+    document.getElementById("threshold").innerHTML = "Threshold: " + currentThreshold;
+}
+function drawMask(x, y) {
+    if (!imageInfo) return;
+    
+    showThreshold();
+    
+    var image = {
+        data: imageInfo.data.data,
+        width: imageInfo.width,
+        height: imageInfo.height,
+        bytes: 4
+    };
+    
+    if (addMode && !oldMask) {
+    	oldMask = mask;
+    }
+    
+    let old = oldMask ? oldMask.data : null;
+    
+    mask = MagicWand.floodFill(image, x, y, currentThreshold, old, true);
+    if (mask) mask = MagicWand.gaussBlurOnlyBorder(mask, blurRadius, old);
+    
+    if (addMode && oldMask) {
+    	mask = mask ? concatMasks(mask, oldMask) : oldMask;
+    }
+    
+    drawBorder();
+}
+function hatchTick() {
+    hatchOffset = (hatchOffset + 1) % (hatchLength * 2);
+    drawBorder(true);
+}
+function drawBorder(noBorder) {
+    if (!mask) return;
+    
+    var x,y,i,j,k,
+        w = imageInfo.width,
+        h = imageInfo.height,
+        ctx = imageInfo.context,
+        imgData = ctx.createImageData(w, h),
+        res = imgData.data;
+    
+    if (!noBorder) cacheInd = MagicWand.getBorderIndices(mask);
+    
+    ctx.clearRect(0, 0, w, h);
+    
+    var len = cacheInd.length;
+    for (j = 0; j < len; j++) {
+        i = cacheInd[j];
+        x = i % w; // calc x by index
+        y = (i - x) / w; // calc y by index
+        k = (y * w + x) * 4; 
+        if ((x + y + hatchOffset) % (hatchLength * 2) < hatchLength) { // detect hatch color 
+            res[k + 3] = 255; // black, change only alpha
+        } else {
+            res[k] = 255; // white
+            res[k + 1] = 255;
+            res[k + 2] = 255;
+            res[k + 3] = 255;
+        }
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+}
+function trace() {
+    var cs = MagicWand.traceContours(mask);
+    cs = MagicWand.simplifyContours(cs, simplifyTolerant, simplifyCount);
+
+    mask = null;
+
+    // draw contours
+    var ctx = imageInfo.context;
+    ctx.clearRect(0, 0, imageInfo.width, imageInfo.height);
+    //inner
+    ctx.beginPath();
+    for (var i = 0; i < cs.length; i++) {
+        if (!cs[i].inner) continue;
+        var ps = cs[i].points;
+        ctx.moveTo(ps[0].x, ps[0].y);
+        for (var j = 1; j < ps.length; j++) {
+            ctx.lineTo(ps[j].x, ps[j].y);
+        }
+    }
+    ctx.strokeStyle = "red";
+    ctx.stroke();    
+    //outer
+    ctx.beginPath();
+    for (var i = 0; i < cs.length; i++) {
+        if (cs[i].inner) continue;
+        var ps = cs[i].points;
+        ctx.moveTo(ps[0].x, ps[0].y);
+        for (var j = 1; j < ps.length; j++) {
+            ctx.lineTo(ps[j].x, ps[j].y);
+        }
+    }
+    ctx.strokeStyle = "blue";
+    ctx.stroke();    
+}
+function paint(color, alpha) {
+    if (!mask) return;
+    
+    var rgba = hexToRgb(color, alpha);
+    
+    var x,y,
+    		data = mask.data,
+    		bounds = mask.bounds,
+        maskW = mask.width,
+        w = imageInfo.width,
+        h = imageInfo.height,
+        ctx = imageInfo.context,
+        imgData = ctx.createImageData(w, h),
+        res = imgData.data;
+    
+    for (y = bounds.minY; y <= bounds.maxY; y++) {
+      for (x = bounds.minX; x <= bounds.maxX; x++) {
+      		if (data[y * maskW + x] == 0) continue;
+          k = (y * w + x) * 4; 
+          res[k] = rgba[0];
+          res[k + 1] = rgba[1];
+          res[k + 2] = rgba[2];
+	        res[k + 3] = rgba[3];
+      }
+		}
+    
+    mask = null;
+    
+    ctx.putImageData(imgData, 0, 0);
+}
+function hexToRgb(hex, alpha) {
+  var int = parseInt(hex, 16);
+  var r = (int >> 16) & 255;
+  var g = (int >> 8) & 255;
+  var b = int & 255;
+
+  return [r,g,b, Math.round(alpha * 255)];
+}
+function concatMasks(mask, old) {
+	let 
+  	data1 = old.data,
+		data2 = mask.data,
+		w1 = old.width,
+		w2 = mask.width,
+		b1 = old.bounds,
+		b2 = mask.bounds,
+		b = { // bounds for new mask
+			minX: Math.min(b1.minX, b2.minX),
+			minY: Math.min(b1.minY, b2.minY),
+			maxX: Math.max(b1.maxX, b2.maxX),
+			maxY: Math.max(b1.maxY, b2.maxY)
+		},
+		w = old.width, // size for new mask
+		h = old.height,
+		i, j, k, k1, k2, len;
+
+	let result = new Uint8Array(w * h);
+
+	// copy all old mask
+	len = b1.maxX - b1.minX + 1;
+	i = b1.minY * w + b1.minX;
+	k1 = b1.minY * w1 + b1.minX;
+	k2 = b1.maxY * w1 + b1.minX + 1;
+	// walk through rows (Y)
+	for (k = k1; k < k2; k += w1) {
+		result.set(data1.subarray(k, k + len), i); // copy row
+		i += w;
+	}
+
+	// copy new mask (only "black" pixels)
+	len = b2.maxX - b2.minX + 1;
+	i = b2.minY * w + b2.minX;
+	k1 = b2.minY * w2 + b2.minX;
+	k2 = b2.maxY * w2 + b2.minX + 1;
+	// walk through rows (Y)
+	for (k = k1; k < k2; k += w2) {
+		// walk through cols (X)
+		for (j = 0; j < len; j++) {
+			if (data2[k + j] === 1) result[i + j] = 1;
+		}
+		i += w;
+	}
+
+	return {
+		data: result,
+		width: w,
+		height: h,
+		bounds: b
+	};
+}
+
+
+
+
+
+ -->

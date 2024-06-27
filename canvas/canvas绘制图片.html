@@ -17,9 +17,9 @@
   <body>
     <div
       id="canvasContainer"
-      style="width: 800px; height: 600px; overflow: hidden"
+      style="width: 1200px; height: 600px; overflow: hidden"
     >
-      <canvas id="myCanvas" width="800" height="600"></canvas>
+      <canvas id="myCanvas" width="1100" height="600"></canvas>
     </div>
     <script>
       const canvas = document.getElementById("myCanvas");
@@ -31,7 +31,7 @@
       let imageY = 0;
       let rectX = 100; // Initial x position of the rectangle
       let rectY = 100; // Initial y position of the rectangle
-      const maxScale = 2.0;
+      const maxScale = 4.0;
       const minScale = 0.5;
       let isRightMouseDown = false;
       let lastMouseX = 0;
@@ -41,7 +41,7 @@
       const image = new Image();
       image.src = "./imgs/QUIC.png";
       image.onload = function () {
-        ctx.drawImage(image, imageX, imageY, canvas.width, canvas.height);
+        ctx.drawImage(image, imageX, imageY, image.width, image.height);
         drawRectangle();
       };
 
@@ -70,8 +70,8 @@
             image,
             imageX,
             imageY,
-            canvas.width * scale,
-            canvas.height * scale
+            image.width * scale,
+            image.height * scale
           );
           drawRectangle();
         }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .list {
+    }
+    .list-item {
+      width: 300px;
+      height: 60px;
+      background-color: steelblue;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      line-height: 60px;
+      padding-left: 5px;
+    }
+    .list-item.moving {
+      background-color: transparent;
+      color: transparent;
+      border: 1px dashed #ccc;
+    }
+  </style>
+  <body>
+    <div class="list">
+      <div draggable="true" class="list-item">1</div>
+      <div draggable="true" class="list-item">2</div>
+      <div draggable="true" class="list-item">3</div>
+      <div draggable="true" class="list-item">4</div>
+      <div draggable="true" class="list-item">5</div>
+      <div draggable="true" class="list-item">6</div>
+    </div>
+
+    <script>
+      const list = document.querySelector(".list");
+      const listItems = document.querySelectorAll(".list-item");
+
+      let sourceTarget = null;
+      list.addEventListener("dragstart", (e) => {
+        // 跟随鼠标的dom的样式，来源开始时dom的样式，所以延迟修改dom的样式，鼠标拖拽的就是原本的样式
+        setTimeout(() => {
+          e.target.classList.add("moving");
+        }, 0);
+        // 拖拽时，鼠标移动的图标是 move
+        e.dataTransfer.effectAllowed = 'move'
+        sourceTarget = e.target;
+      });
+      // 防止拖动结束，拖动节点回到自身, 因为默认情况下是不允许节点拖放到另一个节点上的
+      list.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
+      list.addEventListener("dragenter", (e) => {
+        e.preventDefault();
+        if (e.target === list || e.target === sourceTarget) return;
+        console.log(e.target);
+        const children = [...list.children];
+        const sourceIndex = children.indexOf(sourceTarget);
+        const targetIndex = children.indexOf(e.target);
+        if (sourceIndex < targetIndex) {
+          list.insertBefore(sourceTarget, e.target.nextElementSibling);
+        } else {
+          list.insertBefore(sourceTarget, e.target);
+        }
+      });
+      list.addEventListener('dragend', (e) => {
+        e.target.classList.remove("moving")
+      })
+    </script>
+  </body>
+</html>
