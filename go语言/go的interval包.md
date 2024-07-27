@@ -1,0 +1,3 @@
+命名为internal包，该pack上级下所有的包可以互相访问。
+
+但是该pack的上级的上级想访问 internal是不允许的
